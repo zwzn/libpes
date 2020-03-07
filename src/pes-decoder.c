@@ -403,6 +403,17 @@ static bool init_version1(struct pes_decoder * const decoder)
 	return true;
 }
 
+static bool init_version2(struct pes_decoder * const decoder)
+{
+	int offset = 12;
+
+	offset += 28; /* FIXME: Unknown data */
+
+	decoder->cembone_offset = offset;
+
+	return true;
+}
+
 static bool init_version4(struct pes_decoder * const decoder)
 {
 	int offset = 12;
@@ -515,6 +526,7 @@ struct pes_decoder *pes_decoder_init(const void * const data, const size_t size)
 		}
 
 		if (strncmp(data, "#PES0001", 8) == 0 ? !init_version1(decoder) :
+		    strncmp(data, "#PES0020", 8) == 0 ? !init_version2(decoder) :
 		    strncmp(data, "#PES0040", 8) == 0 ? !init_version4(decoder) :
 		    strncmp(data, "#PES0050", 8) == 0 ? !init_version5(decoder) :
 		    strncmp(data, "#PES0060", 8) == 0 ? !init_version6(decoder) :
